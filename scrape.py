@@ -3,7 +3,8 @@
 """
 # scrape.py
 
-Scraping images and captions from <https://frinkiac.com>.
+Scrape time ranges, image URLs, and captions from <https://frinkiac.com>,
+dumping unto CSV files in the `output/` directory.
 
 Licensed under "MIT No Attribution" (MIT-0), see LICENSE.
 """
