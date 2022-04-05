@@ -32,6 +32,30 @@ class TestCmd(unittest.TestCase):
       scrape.construct_episode_url(19, 20),
       'https://frinkiac.com/episode/S19E20/100000000'
     )
+  
+  def test_extract_image_id(self):
+    self.assertEqual(
+      scrape.extract_image_id('/img/S17E22/5547/small.jpg'),
+      '5547'
+    )
+    self.assertEqual(
+      scrape.extract_image_id('bad.jpg'),
+      None
+    )
+    self.assertEqual(
+      None,
+      None
+    )
+  
+  def construct_large_image_full_url(self):
+    self.assertEqual(
+      scrape.construct_large_image_full_url(17, 22, '5547'),
+      'https://frinkiac.com/img/S17E22/5547/large.jpg'
+    )
+    self.assertEqual(
+      scrape.construct_large_image_full_url(17, 22, None),
+      None
+    )
 
 
 if __name__ == '__main__':
