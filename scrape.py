@@ -30,3 +30,7 @@ EPISODE_COUNT_FROM_SEASON = {
   18: 22,
   19: 20,
 }
+
+
+def construct_episode_url(season, episode):
+  return f'https://frinkiac.com/episode/S{season:02}E{episode:02}/100000000'
