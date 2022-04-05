@@ -58,11 +58,12 @@ def construct_large_image_full_url(season, episode, image_id):
   return f'https://frinkiac.com/img/S{season:02}E{episode:02}/{image_id}/large.jpg'
 
 
-def scrape_data(session, season, episode):
+def scrape_data(season, episode):
   
   season_episode_string = f'S{season:02}E{episode:02}'
   print(f'Started scrape for {season_episode_string}')
   
+  session = requests_html.HTMLSession()
   response = session.get(construct_episode_url(season, episode))
   if not response:
     print(f'Got {response} for {season_episode_string}')
@@ -97,10 +98,9 @@ def scrape_data(session, season, episode):
 
 
 def main():
-  session = requests_html.HTMLSession()
   for season, episode_count in EPISODE_COUNT_FROM_SEASON.items():
     for episode in range(1, episode_count+1):
-      scrape_data(session, season, episode)
+      scrape_data(season, episode)
 
 
 if __name__ == '__main__':
