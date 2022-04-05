@@ -14,6 +14,7 @@ import csv
 import os
 import re
 import requests_html
+import time
 
 
 DOMAIN = 'https://frinkiac.com'
@@ -72,6 +73,7 @@ def scrape_data(season, episode):
     return
   
   season_episode_string = f'S{season:02}E{episode:02}'
+  start_time = time.perf_counter()
   print(f'Started scrape for {season_episode_string}')
   
   session = requests_html.HTMLSession()
@@ -111,7 +113,9 @@ def scrape_data(season, episode):
       
       csv_writer.writerow([time_range, large_image_full_url, caption])
     
-    print(f'Finished scrape for {season_episode_string}')
+    finish_time = time.perf_counter()
+    duration_string = f'{finish_time - start_time:0.1f}s'
+    print(f'Finished scrape for {season_episode_string} in {duration_string}')
 
 
 def main():
