@@ -72,14 +72,14 @@ def scrape_data(season, episode):
   if os.path.exists(output_file_name): # assume complete
     return
   
-  season_episode_string = f'S{season:02}E{episode:02}'
+  episode_label = f'S{season:02}E{episode:02}'
   start_time = time.perf_counter()
-  print(f'Started scrape for {season_episode_string}')
+  print(f'Started scrape for {episode_label}')
   
   session = requests_html.HTMLSession()
   response = session.get(construct_episode_url(season, episode))
   if not response:
-    print(f'Got {response} for {season_episode_string}')
+    print(f'Got {response} for {episode_label}')
     return
   
   with open(output_file_name, 'w', encoding='utf-8', newline='') as csv_file:
@@ -92,13 +92,13 @@ def scrape_data(season, episode):
       try:
         time_range = row.find('small', first=True).text
       except AttributeError:
-        print(f'No time range found for row {n} of {season_episode_string}')
+        print(f'No time range found for row {n} of {episode_label}')
         time_range = None
       
       try:
         small_image_url = row.find('img', first=True).attrs['src']
       except (AttributeError, KeyError):
-        print(f'No image found for row {n} of {season_episode_string}')
+        print(f'No image found for row {n} of {episode_label}')
         small_image_url = None
       
       image_id = extract_image_id(small_image_url)
@@ -108,14 +108,14 @@ def scrape_data(season, episode):
       try:
         caption = row.find('p', first=True).text
       except AttributeError:
-        print(f'No caption found for row {n} of {season_episode_string}')
+        print(f'No caption found for row {n} of {episode_label}')
         caption = None
       
       csv_writer.writerow([time_range, large_image_full_url, caption])
     
     finish_time = time.perf_counter()
-    duration_string = f'{finish_time - start_time:0.1f}s'
-    print(f'Finished scrape for {season_episode_string} in {duration_string}')
+    time_taken = f'{finish_time - start_time:0.1f}s'
+    print(f'Finished scrape for {episode_label} in {time_taken}')
 
 
 def main():
