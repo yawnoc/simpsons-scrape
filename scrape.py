@@ -9,6 +9,8 @@ Licensed under "MIT No Attribution" (MIT-0), see LICENSE.
 """
 
 
+import csv
+import os
 import re
 import requests_html
 
@@ -58,7 +60,15 @@ def construct_large_image_full_url(season, episode, image_id):
   return f'https://frinkiac.com/img/S{season:02}E{episode:02}/{image_id}/large.jpg'
 
 
+def construct_output_file_name(season, episode):
+  return f'output/S{season:02}E{episode:02}.tsv'
+
+
 def scrape_data(season, episode):
+  
+  output_file_name = construct_output_file_name(season, episode)
+  if os.path.exists(output_file_name): # assume complete
+    return
   
   season_episode_string = f'S{season:02}E{episode:02}'
   print(f'Started scrape for {season_episode_string}')
@@ -69,32 +79,38 @@ def scrape_data(season, episode):
     print(f'Got {response} for {season_episode_string}')
     return
   
-  response.html.render()
-  for n, row in enumerate(response.html.find('div.episode-subtitle.row')):
+  with open(output_file_name, 'w', encoding='utf-8', newline='') as tsv_file:
     
-    try:
-      time_range = row.find('small', first=True).text
-    except AttributeError:
-      print(f'No time range found for row {n} of {season_episode_string}')
-      time_range = None
+    tsv_writer = csv.writer(tsv_file, delimiter='\t')
     
-    try:
-      small_image_url = row.find('img', first=True).attrs['src']
-    except (AttributeError, KeyError):
-      print(f'No image found for row {n} of {season_episode_string}')
-      small_image_url = None
+    response.html.render()
+    for n, row in enumerate(response.html.find('div.episode-subtitle.row')):
+      
+      try:
+        time_range = row.find('small', first=True).text
+      except AttributeError:
+        print(f'No time range found for row {n} of {season_episode_string}')
+        time_range = None
+      
+      try:
+        small_image_url = row.find('img', first=True).attrs['src']
+      except (AttributeError, KeyError):
+        print(f'No image found for row {n} of {season_episode_string}')
+        small_image_url = None
+      
+      image_id = extract_image_id(small_image_url)
+      large_image_full_url = \
+              construct_large_image_full_url(season, episode, image_id)
+      
+      try:
+        caption = row.find('p', first=True).text
+      except AttributeError:
+        print(f'No caption found for row {n} of {season_episode_string}')
+        caption = None
+      
+      tsv_writer.writerow([time_range, large_image_full_url, caption])
     
-    image_id = extract_image_id(small_image_url)
-    large_image_full_url = \
-            construct_large_image_full_url(season, episode, image_id)
-    
-    try:
-      caption = row.find('p', first=True).text
-    except AttributeError:
-      print(f'No caption found for row {n} of {season_episode_string}')
-      caption = None
-    
-    print(time_range, large_image_full_url, caption)
+    print(f'Finished scrape for {season_episode_string}')
 
 
 def main():
