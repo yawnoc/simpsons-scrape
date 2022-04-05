@@ -4,6 +4,8 @@
 # scrape.py
 
 Scraping images and captions from <https://frinkiac.com>.
+
+Licensed under "MIT No Attribution" (MIT-0), see LICENSE.
 """
 
 
