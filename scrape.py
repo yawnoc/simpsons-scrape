@@ -61,7 +61,7 @@ def construct_large_image_full_url(season, episode, image_id):
 
 
 def construct_output_file_name(season, episode):
-  return f'output/S{season:02}E{episode:02}.tsv'
+  return f'output/S{season:02}E{episode:02}.csv'
 
 
 def scrape_data(season, episode):
@@ -79,9 +79,9 @@ def scrape_data(season, episode):
     print(f'Got {response} for {season_episode_string}')
     return
   
-  with open(output_file_name, 'w', encoding='utf-8', newline='') as tsv_file:
+  with open(output_file_name, 'w', encoding='utf-8', newline='') as csv_file:
     
-    tsv_writer = csv.writer(tsv_file, delimiter='\t')
+    csv_writer = csv.writer(csv_file)
     
     response.html.render()
     for n, row in enumerate(response.html.find('div.episode-subtitle.row')):
@@ -108,7 +108,7 @@ def scrape_data(season, episode):
         print(f'No caption found for row {n} of {season_episode_string}')
         caption = None
       
-      tsv_writer.writerow([time_range, large_image_full_url, caption])
+      csv_writer.writerow([time_range, large_image_full_url, caption])
     
     print(f'Finished scrape for {season_episode_string}')
 
