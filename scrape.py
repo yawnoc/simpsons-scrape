@@ -4,7 +4,7 @@
 # scrape.py
 
 Scrape time ranges, image URLs, and captions from <https://frinkiac.com>,
-dumping unto CSV files in the `output/` directory.
+writing unto CSV files in the `output/` directory.
 
 Licensed under "MIT No Attribution" (MIT-0), see LICENSE.
 """
@@ -42,6 +42,15 @@ EPISODE_COUNT_FROM_SEASON = {
 
 
 def construct_episode_url(season, episode):
+  """
+  Construct the URL for an episode.
+  
+  The trailing '100000000' serves two purposes:
+  1. It prevents a 404; and
+  2. It bypasses the need to click 'Load More'
+     to get all rows for an episode.
+  """
+  
   return f'https://frinkiac.com/episode/S{season:02}E{episode:02}/100000000'
 
 
@@ -67,6 +76,9 @@ def construct_output_file_name(season, episode):
 
 
 def scrape_data(season, episode):
+  """
+  Scrape the data for an episode and write to a CSV.
+  """
   
   output_file_name = construct_output_file_name(season, episode)
   if os.path.exists(output_file_name): # assume complete
